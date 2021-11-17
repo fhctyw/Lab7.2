@@ -11,10 +11,11 @@ void CreateRow(int** arr, const int rowNo, const int N, int colNo, const int Low
 void CreateRows(int** arr, const int N1, int rowNo, const int N2, const int Low=-10, const int High=10);
 void PrintRow(int** arr, const int rowNo, const int N, int colNo);
 void PrintRows(int** arr, const int N1, int rowNo, const int N2);
-bool SearchMaxElem(int** a, const int N, int i, int& minEven, int& k);
 
-void InitArrayZeros(int* arr, const int size, const int i);
-void FindMinElemCol(int** arr, int *tmpArr, const int rowNo, const int N, int colNo);
+void FindMinElemCol(int** arr, const int rowNo, const int N, int colNo, int& min_index);
+void FindMinElemCols(int** arr, const int rowNo, const int rowCount, int colNo, int colCount, int& max);
+void FindFirstMinElemCol(int** arr, const int rowNo, const int rowCount, int colNo, int colCount, int& max_index);
+
 
 int main()
 {
@@ -28,11 +29,13 @@ int main()
 		arr[i] = new int[k];
 	CreateRows(arr, k, n, 0);
 	PrintRows(arr, k, n, 0);
-	int maxElem;
-	if (SearchMaxElem(arr, k, n, maxElem))
-		cout << "min elem = " << maxElem << endl;
-	else
-		cout << "there are no even elements" << endl;
+
+	int max;
+	FindFirstMinElemCol(arr, 0, n, 0, k, max);
+	FindMinElemCols(arr, 0, n, 0, k, max);
+
+	cout << "max = " << max << endl;
+
 
 	for (int i = 0; i < n; i++)
 		delete[] arr[i];
@@ -73,31 +76,40 @@ void PrintRows(int** arr, const int colCount, const int rowCount, int rowNo)
 		cout << endl;
 }
 
-bool SearchMaxElem(int** arr, const int N, int i, int& maxElem, int& k)
+
+void FindFirstMinElemCol(int** arr, const int rowNo, const int rowCount, int colNo, int colCount, int& max)
 {
-	//if (arr[i][N - i - 1]);
-	if 
+	if (colNo % 2 == 0)
+	{
+		int min_index = 0;
+		FindMinElemCol(arr, rowNo, rowCount, colNo, min_index);
+		max = arr[min_index][colNo];
+		return;
+	}
+	if (colNo < colCount - 1)
+		FindFirstMinElemCol(arr, rowNo, rowCount, colNo + 1, colCount, max);
 }
 
-void InitArrayZeros(int* arr, const int size, const int i)
+void FindMinElemCol(int** arr, const int rowNo, const int N, int colNo, int &min_index)
 {
-	arr[i] = 0;
-	if (i < size - 1)
-		InitArrayZeros(arr, size, i + 1);
+	if (arr[rowNo][colNo] < arr[min_index][colNo])
+		min_index = rowNo;
+	if (rowNo < N - 1)
+		FindMinElemCol(arr, rowNo + 1, N, colNo, min_index);
 }
 
-/*
-* for (int j = 0; j < rowCount; j++)
-		if (j % 2 == 0) {
-			for (int i = 0; i < colCount; i++)
-				if (arr[i][j] < arr[tmpArr[ti]][j])
-					tmpArr[ti] = i;
-			ti++;
+void FindMinElemCols(int** arr, const int rowNo, const int rowCount, int colNo, int colCount, int &max)
+{
+	if (colNo % 2 == 0)
+	{
+		int min_index = 0;
+		FindMinElemCol(arr, rowNo, rowCount, colNo, min_index);
+
+		if (arr[min_index][colNo] > max)
+		{
+			max = arr[min_index][colNo];
 		}
-*/
-
-void FindMinElemCol(int** arr, int* tmpArr, const int rowNo, const int N, int colNo)
-{
-	if (arr[rowNo][colNo] < arr[tmpArr])
-
+	}
+	if (colNo < colCount - 1)
+		FindMinElemCols(arr, rowNo, rowCount, colNo + 1, colCount, max);
 }

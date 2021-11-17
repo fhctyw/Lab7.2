@@ -59,35 +59,39 @@ void Print(int** arr, const int colCount, const int rowCount)
 
 bool SearchMaxElem(int** arr, const int colCount, const int rowCount, int& maxElem)
 {
-	int sizeTmpArr = colCount % 2 == 0 ? colCount / 2 : colCount / 2 + 1;
-
-	if (sizeTmpArr == 0)
-		return false;
-
-	int* tmpArr = new int[sizeTmpArr];
-	int ti = 0;
-
-	for (int i = 0; i < sizeTmpArr; i++)
-		tmpArr[i] = 0;
-
+	int min_index = 0;
 	for (int j = 0; j < colCount; j++)
 		if (j % 2 == 0) {
 			for (int i = 0; i < rowCount; i++)
-				if (arr[i][j] < arr[tmpArr[ti]][j])
-					tmpArr[ti] = i;
-			ti++;
+			{
+				if (arr[i][j] < arr[min_index][j])
+				{
+					min_index = i;
+				}
+			}
+			maxElem = arr[min_index][j];
+			break;
 		}
 
-	ti = 0;
-	maxElem = arr[tmpArr[0]][0];
 	for (int j = 0; j < colCount; j++)
-		if (j % 2 == 0) {
-			if (arr[tmpArr[ti]][j] > maxElem)
-				maxElem = arr[tmpArr[ti]][j];
-			ti++;
-		}
+	{
+		if (j % 2 == 0)
+		{
+			int min_index = 0;
+			for (int i = 0; i < rowCount; i++)
+			{
+				if (arr[i][j] < arr[min_index][j])
+				{
+					min_index = i;
+				}
+			}
 
-	delete[] tmpArr;
+			if (arr[min_index][j] > maxElem)
+			{
+				maxElem = arr[min_index][j];
+			}
+		}
+	}
 
 	return true;
 }
